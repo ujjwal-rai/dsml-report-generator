@@ -1,0 +1,22 @@
+Feature,Description
+Restaurant ID,INT
+Restaurant Name,String
+Country Code,INT
+City,String
+Address,String
+Locality,String
+Locality Verbose,String
+Longitude,Float
+Latitude,Float
+Cuisines,String
+Average Cost for two,INT
+Currency,String
+Has Table booking,String
+Has Online delivery,String
+Is delivering now,String
+Switch to order menu,String
+Price range,INT
+Aggregate rating,Float
+Rating color,String
+Rating text,String
+Votes,INT

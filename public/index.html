@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Upload and Analysis</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="josefin-sans-regular">Upload CSV Files</h1>
+        <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="POST">
+            <label class="josefin-sans-regular" for="dataset">Upload Training Dataset (CSV):</label>
+            <input class="button-64" type="file" name="dataset" accept=".csv" required>
+            <label class="josefin-sans-regular" for="features">Upload Feature Description File (CSV):</label>
+            <input class="button-64" type="file" name="featureDesc" accept=".csv" required>
+            <button class="button-64" type="submit">Upload and Process</button>
+        </form>
+    </div>
+    <h2 class="josefin-sans-regular">Results</h2>
+    <div id="results"></div>
+    <div class="footer">
+        <p>Copyright @ 2024 - All Right Reserved.</p>
+     </div>
+    <script>
+        $(document).ready(function() {
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault(); // Prevent page refresh
+
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: '/api/upload',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        // Clear previous results
+                        $('#results').empty();
+                        
+                        // Display statistics
+                        $('#results').append('<h3>Statistics:</h3>');
+                        $('#results').append('<pre>' + JSON.stringify(data.analysis, null, 2) + '</pre>');
+                        
+                        // Display plots
+                        $('#results').append('<h3>Plots:</h3>');
+                        data.analysis.plots.forEach(plot => {
+                            $('#results').append(`<img src="../${plot}" alt="Plot" style="max-width: 400px; margin: 10px;">`);
+                        });
+
+                        // Display insights
+                        $('#results').append('<h3>Insights:</h3>');
+                        data.insights.forEach((insight, index) => {
+                            $('#results').append(`<p>Question ${index + 1}: ${insight}</p>`);
+                        });
+                    },
+                    error: function(err) {
+                        $('#results').empty().append('<p>Error processing files. Please try again.</p>');
+                        console.error(err);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
